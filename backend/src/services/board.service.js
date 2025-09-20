@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import Board from '../models/board.model.js';
 
 class BoardService {
@@ -31,7 +32,13 @@ class BoardService {
     if (!board) {
       throw new Error('Board not found');
     }
-    await board.remove(); // This will trigger the pre-remove hook
+    
+    // Delete all associated tasks first
+    await mongoose.model('Task').deleteMany({ board: id });
+    
+    // Then delete the board
+    await Board.findByIdAndDelete(id);
+    
     return board;
   }
 }

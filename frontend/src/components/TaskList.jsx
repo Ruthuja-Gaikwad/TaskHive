@@ -47,6 +47,16 @@ function TaskList() {
     }
   };
 
+  // Function to delete a task
+  const handleDeleteTask = async (taskId) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/tasks/${taskId}`);
+      setTasks(tasks.filter(task => task._id !== taskId));
+    } catch (err) {
+      setError('Error deleting task');
+    }
+  };
+
   // Function to get status badge styles
   const getStatusStyles = (status) => {
     const styles = {
@@ -120,9 +130,19 @@ function TaskList() {
                 <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusStyles(task.status)}`}>
                   {task.status}
                 </span>
-                <span className="text-sm text-gray-500">
-                  Due: {new Date(task.deadline).toLocaleDateString()}
-                </span>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-gray-500">
+                    Due: {new Date(task.deadline).toLocaleDateString()}
+                  </span>
+                  <button
+                    onClick={() => handleDeleteTask(task._id)}
+                    className="p-1 text-red-600 hover:text-red-800 rounded-full hover:bg-red-50"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
           ))}
